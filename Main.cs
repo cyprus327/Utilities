@@ -62,7 +62,7 @@ internal class Program {
 		Console.WriteLine("Enter an expression or 'exit' to exit:");
 
 		while (true) {
-			string expression = Console.ReadLine() ?? "!";
+			string expression = BetterInput.Read();
 			if (expression == "exit") return;
 			
 			if (expression == "!") {
@@ -75,8 +75,10 @@ internal class Program {
 			}
 	
 			double result = Calculator.EvaluateExpression(expression);
-			Display("= ", ConsoleColor.Cyan);
+			Display(expression, ConsoleColor.White);
+			Display(" = ", ConsoleColor.Cyan);
 			Display($"{result.ToString()}\n", ConsoleColor.Blue);
+			Console.ReadKey(true);
 		}
 	}
 
@@ -92,10 +94,10 @@ internal class Program {
 			menu.Run();
 
 			switch (menu.SelectedIndex) {
-			//case 0: Chess.PlayVsAI(); break; // TODO
-			case 1: Chess.Play(); break;
-			case 2: Chess.StepThroughMoves(); break;
-			case 3: return;
+				case 0: Chess.PlayVsAI(); break;
+				case 1: Chess.Play(); break;
+				case 2: Chess.StepThroughMoves(); break;
+				case 3: return;
 			}
 		}
 	}
@@ -111,16 +113,16 @@ internal class Program {
 			menu.Run();
 
 			switch (menu.SelectedIndex) {
-			case 0: TicTacToe.PlayVsAI(); break;
-			case 1: TicTacToe.PlayVsHuman(); break;
-			case 2: return;
+				case 0: TicTacToe.PlayVsAI(); break;
+				case 1: TicTacToe.PlayVsHuman(); break;
+				case 2: return;
 			}
 		}
 	}
 
 	private static void Display(string message, ConsoleColor col) {
-			Console.ForegroundColor = col;
-			Console.Write(message);
-			Console.ForegroundColor = ConsoleColor.White;
+		Console.ForegroundColor = col;
+		Console.Write(message);
+		Console.ForegroundColor = ConsoleColor.White;
 	}
 }
