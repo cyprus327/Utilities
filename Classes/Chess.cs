@@ -68,13 +68,13 @@ namespace Utilities {
 		public static void PlayVsAI() {
 			InitializeBoard(out Piece[,] board);
 
-			Console.Clear();
-			DrawBoard(board);
-			
 			char currentPlayer = 'w';
 
 			char winner = ' ';
 			do {
+				Console.Clear();
+				DrawBoard(board);
+				
 				if (currentPlayer == 'w') {
 					Console.WriteLine("\nYour move. (White)");
 					Console.Write("> ");
@@ -90,9 +90,6 @@ namespace Utilities {
 				}
 
 				currentPlayer = currentPlayer == 'w' ? 'b' : 'w';
-
-				Console.Clear();
-				DrawBoard(board);
 			}
 			while (!GameOver(board, out winner));
 
@@ -153,10 +150,10 @@ namespace Utilities {
 							if (!piece.CanMove(destRow, destCol, board)) continue;
 							
 							Piece[,] newBoard = (Piece[,])board.Clone();
-							newBoard[destRow, destCol] = newBoard[row, col];
+							newBoard[destRow, destCol] = board[row, col];
 							newBoard[row, col] = null;
 
-							int score = Minimax(newBoard, 3, true);
+							int score = Minimax(ai, 3, newBoard, int.MinValue, int.MaxValue);
 							if (score > maxScore) {
 								maxScore = score;
 								bestMoves.Clear();
@@ -165,6 +162,7 @@ namespace Utilities {
 							else if (score == maxScore) {
 								bestMoves.Add((row, col, destRow, destCol));
 							}
+
 						}
 					}
 				}
@@ -176,56 +174,46 @@ namespace Utilities {
 			Piece.Move(move.Item1, move.Item2, move.Item3, move.Item4, board);
 		}
 
-		private static int Minimax(Piece[,] board, int depth, bool maximizingPlayer) {
-			if (depth == 0 || GameOver(board, out char winner)) {
-				return EvaluateBoard(board, maximizingPlayer == true ? 'b' : 'w');
+		private static int Minimax(char aiSymbol, int depth, Piece[,] board, int alpha, int beta) {
+			if (depth <= 0 || GameOver(board, out char winner)) {
+				return EvaluateBoard(board, aiSymbol);
 			}
 
-			int bestValue = maximizingPlayer ? int.MinValue : int.MaxValue;
-			if (maximizingPlayer) {
-				for (int row = 0; row < 8; row++) {
-					for (int col = 0; col < 8; col++) {
-						Piece piece = board[row, col];
-						if (piece == null || piece.Symbol != 'b') continue;
+	       	int bestScore = aiSymbol == 'w' ? int.MinValue : int.MaxValue;
+			Piece piece;
 
-						for (int destRow = 0; destRow < 8; destRow++) {
-							for (int destCol = 0; destCol < 8; destCol++) {
-								if (!piece.CanMove(destRow, destCol, board)) continue;
+			for (int row = 0; row < 8; row++) {
+				for (int col = 0; col < 8; col++) {
+					piece = board[row, col];
+					if (piece == null || piece.Symbol != aiSymbol) continue;
 
-								Piece[,] newBoard = (Piece[,])board.Clone();
-								newBoard[destRow, destCol] = piece;
-								newBoard[row, col] = null;
+					for (int destRow = 0; destRow < 8; destRow++) {
+						for (int destCol = 0; destCol < 8; destCol++) {
+							if (!piece.CanMove(destRow, destCol, board)) continue;
 
-								int val = Minimax(newBoard, depth - 1, false);
-								bestValue = Math.Max(bestValue, val);
+							Piece[,] newBoard = (Piece[,])board.Clone();
+							newBoard[destRow, destCol] = board[row, col];
+							newBoard[row, col] = null;
+							
+							char opposite = aiSymbol == 'w' ? 'b' : 'w';
+							int currentScore = Minimax(opposite, depth - 1, newBoard, alpha, beta);
+
+							if (aiSymbol == 'w') {
+								bestScore = Math.Max(bestScore, currentScore);
+								alpha = Math.Max(currentScore, alpha);
+								if (beta <= alpha) break;
 							}
-						}
-					}
-				}
-			}
-			else {
-				for (int row = 0; row < 8; row++) {
-					for (int col = 0; col < 8; col++) {
-						Piece piece = board[row, col];
-						if (piece == null || piece.Symbol != 'w') continue;
-
-						for (int destRow = 0; destRow < 8; destRow++) {
-							for (int destCol = 0; destCol < 8; destCol++) {
-								if (!piece.CanMove(destRow, destCol, board)) continue;
-
-								Piece[,] newBoard = (Piece[,])board.Clone();
-								newBoard[destRow, destCol] = piece;
-								newBoard[row, col] = null;
-
-								int val = Minimax(newBoard, depth - 1, false);
-								bestValue = Math.Min(bestValue, val);
+							else {
+								bestScore = Math.Min(bestScore, currentScore);
+								alpha = Math.Min(currentScore, beta);
+								if (beta <= alpha) break;
 							}
 						}
 					}
 				}
 			}
 
-			return bestValue;
+			return bestScore;
 		}
 
 		private static int EvaluateBoard(Piece[,] board, char player) {
@@ -273,7 +261,7 @@ namespace Utilities {
 				winner = 'w';
 				return true;
 			}
-
+/*
 			for (int row = 0; row < 8; row++) {
 				for (int col = 0; col < 8; col++) {
 					Piece piece = board[row, col];
@@ -302,7 +290,7 @@ namespace Utilities {
 						return true;
 					}
 				}
-			}
+			} */
 			return false;
 		}
 		

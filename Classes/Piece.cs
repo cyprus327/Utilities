@@ -234,6 +234,8 @@ namespace Utilities {
             int moveDistance = Math.Abs(destRow - Row);
 
             if (destCol == Col && board[destRow, destCol] == null) {
+				if (Math.Sign(destRow - Row) != rowDirection) return false;
+				
                 if (moveDistance == 1) {
                     return true;
                 }
