@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 
 namespace Utilities {
-	public class PasswordManager {
+	internal static class PasswordManager {
 		public static void GetPass(string key) {
 	        string? pass = Encryptor.GetPassword(key);
 	

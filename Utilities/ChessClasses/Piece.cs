@@ -8,12 +8,12 @@ namespace Utilities {
     internal abstract class Piece {
         public int Col { get; set; }
         public int Row { get; set; }
-        public char Symbol { get; set; }
-        public string Name { get; set; } = string.Empty;
-		public int Value { get; set; }
+        public char Symbol { get; init; }
+        public string Name { get; init; } = string.Empty;
+		public int Value { get; init; }
 
         public abstract bool CanMove(int destRow, int destCol, Piece[,] board);
-
+		
 		public static void Move(int row, int col, int destRow, int destCol, Piece[,] board) {
 			board[row, col].Row = destRow;
 			board[row, col].Col = destCol;
@@ -54,8 +54,6 @@ namespace Utilities {
         }
 
         public override bool CanMove(int destRow, int destCol, Piece[,] board) {
-            //if (PieceInCheck(this, board)) return false;
-
 			if (!CoordsOnBoard(destRow, destCol)) return false; 
 			if (destRow == Row && destCol == Col) return false;
 			if (board[destRow, destCol] != null && board[destRow, destCol].Symbol == Symbol) return false;

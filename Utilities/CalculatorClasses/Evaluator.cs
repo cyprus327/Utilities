@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Utilities {
-	public static class Calculator {
+	internal static class Evaluator {
 		public static double EvaluateExpression(string expression) {
 	        if (expression.Length == 1 && double.TryParse(expression, out double num)) {
 	            return num;

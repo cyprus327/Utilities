@@ -6,7 +6,7 @@ using System.Linq;
 using System.IO;
 
 namespace Utilities {
-    public static class Encryptor {
+    internal static class Encryptor {
         static string SEC = "qwertyuiopasdfghjklzxcvbnm,./;=-!@#$%^&*()1234567890\\~`\n\n\n\t\t\t";
         const string PRED = "Manager";
 		const char S = '/';

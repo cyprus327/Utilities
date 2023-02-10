@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 namespace Utilities {
-	public class Menu {
+	internal class Menu {
 		public Menu(string title, string[] options) {
 			_title = title;
 			_options = options;

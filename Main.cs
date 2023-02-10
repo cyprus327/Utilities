@@ -2,7 +2,7 @@ using Utilities;
 using System;
 
 internal class Program {
-    static void Main() {			
+    internal static void Main() {			
 		Menu menu = new Menu("Utilities.", new string[] {
 			"Password Manager", 
 			"Calculator", 
@@ -74,7 +74,7 @@ internal class Program {
 				RunCalculator();
 			}
 	
-			double result = Calculator.EvaluateExpression(expression);
+			double result = Evaluator.EvaluateExpression(expression);
 			Display(expression, ConsoleColor.White);
 			Display(" = ", ConsoleColor.Cyan);
 			Display($"{result.ToString()}\n", ConsoleColor.Blue);
@@ -95,7 +95,7 @@ internal class Program {
 
 			switch (menu.SelectedIndex) {
 				case 0: Chess.PlayVsAI(); break;
-				case 1: Chess.Play(); break;
+				case 1: Chess.PlayVsHuman(); break;
 				case 2: Chess.StepThroughMoves(); break;
 				case 3: return;
 			}

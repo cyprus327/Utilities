@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 namespace Utilities {
-	public static class TicTacToe {
+	internal static class TicTacToe {
 		static char[] squares = { '*', '*', '*', '*', '*', '*', '*', '*', '*' };
 		
 		public static void PlayVsHuman() {
