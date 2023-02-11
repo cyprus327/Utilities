@@ -1,18 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Security.Cryptography;
 
 namespace Utilities {
     internal static class Chess {
-		public static void StepThroughMoves() {
+		public static void StepThroughMoves(bool pawnsEnabled = true) {
 			InitializeBoard(out Piece[,] board);
 
-			for (int i = 0; i < 8; i++) {
-				board[1, i] = null;
-				board[6, i] = null;
+			if (!pawnsEnabled) {
+				for (int i = 0; i < 8; i++) {
+					board[1, i] = null;
+					board[6, i] = null;
+				}
 			}
 
+			Console.CursorVisible = false;
 			for (int row = 0; row < 8; row++) {
 				for (int col = 0; col < 8; col++) {
 					if (board[row, col] == null) continue;
@@ -20,17 +22,26 @@ namespace Utilities {
 					for (int destRow = 0; destRow < 8; destRow++) {
 						for (int destCol = 0; destCol < 8; destCol++) {
 							if (!piece.CanMove(destRow, destCol, board)) continue;
-							Piece[,] copyBoard = (Piece[,])board.Clone();
-							copyBoard[destRow, destCol] = copyBoard[row, col];
-							copyBoard[row, col] = null;
+							//Piece[,] copyBoard = (Piece[,])board.Clone();
+							//copyBoard[destRow, destCol] = copyBoard[row, col];
+							//copyBoard[row, col] = null;
 							Console.Clear();
-							DrawBoard(copyBoard);
-							Thread.Sleep(250);
+							Console.Write(new string('\n', destRow));
+							Console.Write(new string(' ', destCol));
+							Console.Write(board[row, col].Name);
+							//DrawBoard(copyBoard);
+							System.Threading.Thread.Sleep(10);
 						}
 					}
 				}
 			}
+			Console.CursorVisible = true;
 
+			if (pawnsEnabled) {
+				StepThroughMoves(false);
+				return;
+			}
+			
 			Console.WriteLine("\nPress any key to continue...");
 			Console.ReadKey(true);
 		}
@@ -276,42 +287,50 @@ namespace Utilities {
 			return false; 
 		}
 		
-        private static void DrawBoard(Piece[,] board) {
-            //Console.ForegroundColor = ConsoleColor.Cyan;
+        private static void DrawBoard(Piece[,] board, List<Piece> additionals = null) {
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("   a b c d e f g h");
-            //Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("  =---------------=");
             for (int row = 0; row < 8; row++) {
-              //  Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write(8 - row);
-                //Console.ForegroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Blue;
                 Console.Write(" |");
                 for (int col = 0; col < 7; col++) {
                     if (board[row, col] == null) {
-                 //       Console.ForegroundColor = ConsoleColor.DarkGray;
+                        Console.ForegroundColor = ConsoleColor.Gray;
                         Console.Write("- ");
                     }
+					else if (additionals != null && additionals.Contains(board[row, col])) {
+						Console.ForegroundColor = ConsoleColor.Green;
+						for (int destRow = 0; destRow < 8; destRow++) {
+							for (int destCol = 0; destCol < 8; destCol++) {
+								if (!board[row, col].CanMove(destRow, destCol, board)) continue;
+
+                        		Console.Write($"{board[row, col].Name} ");
+							}
+						}
+					}
                     else {
-                   //     Console.ForegroundColor = board[row, col].Symbol == 'w' ? ConsoleColor.White : ConsoleColor.Gray;
-                        string name = board[row, col].Symbol == 'w' ? board[row, col].Name : board[row, col].Name.ToLower();
-                        Console.Write($"{name} ");
+                        Console.ForegroundColor = board[row, col].Symbol == 'w' ? ConsoleColor.White : ConsoleColor.DarkGray;
+                        Console.Write($"{board[row, col].Name} ");
                     }
                 }
 
                 if (board[row, 7] == null) {
-                    //Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.ForegroundColor = ConsoleColor.Gray;
                     Console.Write("-");
                 }
                 else {
-                    //Console.ForegroundColor = board[row, 7].Symbol == 'w' ? ConsoleColor.White : ConsoleColor.Gray;
-                    string name = board[row, 7].Symbol == 'w' ? board[row, 7].Name : board[row, 7].Name.ToLower();
-                    Console.Write(name);
+                    Console.ForegroundColor = board[row, 7].Symbol == 'w' ? ConsoleColor.White : ConsoleColor.DarkGray;
+                    Console.Write(board[row, 7].Name);
                 }
-                //Console.ForegroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine("|");
             }
             Console.WriteLine("  =---------------=");
-            //Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         private static void InitializeBoard(out Piece[,] board) {
