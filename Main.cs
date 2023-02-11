@@ -1,13 +1,16 @@
 using Utilities;
 using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
 
 internal class Program {
-    internal static void Main() {			
+    internal static void Main() {		
 		Menu menu = new Menu("Utilities.", new string[] {
 			"Password Manager", 
 			"Calculator", 
 			"Chess",
-			"Tic Tac Toe\n",
+			"Tic Tac Toe",
+			"Get Random Steam Game\n",
 			"Exit" 
 		});
 
@@ -19,7 +22,8 @@ internal class Program {
 				case 1: RunCalculator(); break;
 				case 2: RunChess(); break;
 				case 3: RunTicTacToe(); break;
-				case 4: Environment.Exit(0); break;
+				case 4: RunSteamScraper(); break;
+				case 5: Environment.Exit(0); break;
 				default: break;
 			}
 		}
@@ -118,6 +122,49 @@ internal class Program {
 				case 2: return;
 			}
 		}
+	}
+
+	private static void RunSteamScraper() {
+		Menu menu = new Menu("Select amount of games to search.", new string[] {
+			"Low",
+			"Medium",
+			"High",
+		});
+
+		List<string> gameNames;
+		int rand;
+		string game;
+		
+		menu.Run();
+		Console.WriteLine();
+		switch (menu.SelectedIndex) {
+			case 0: 
+				Scraper.GenerateGames(out gameNames, 0, 5);
+				rand = RandomNumberGenerator.GetInt32(gameNames.Count - 1);
+				game = gameNames[rand];
+				Display("\nYou should play: ", ConsoleColor.Blue);
+				Display(game + "\n", ConsoleColor.Cyan);
+				Console.ReadKey(true);
+				break;
+			case 1:
+				Scraper.GenerateGames(out gameNames, 0, 12);
+				rand = RandomNumberGenerator.GetInt32(gameNames.Count - 1);
+				game = gameNames[rand];
+				Display("\nYou should play: ", ConsoleColor.Blue);
+				Display(game + "\n", ConsoleColor.Cyan);
+				Console.ReadKey(true);
+				break;
+			case 2:
+				Scraper.GenerateGames(out gameNames, 0, 30);
+				rand = RandomNumberGenerator.GetInt32(gameNames.Count - 1);
+				game = gameNames[rand];
+				Display("\nYou should play: ", ConsoleColor.Blue);
+				Display(game + "\n", ConsoleColor.Cyan);
+				Console.ReadKey(true);
+				break;
+		}
+
+		if (Console.ReadKey(true).Key != ConsoleKey.Escape) RunSteamScraper();
 	}
 
 	private static void Display(string message, ConsoleColor col) {
