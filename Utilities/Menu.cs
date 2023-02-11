@@ -6,12 +6,12 @@ namespace Utilities {
 	internal class Menu {
 		public Menu(string title, string[] options) {
 			_title = title;
-			_options = options;
+			Options = options;
 		}
 
 		readonly string _title;
-		readonly string[] _options;
 		
+		public string[] Options { get; set; }
 		public int SelectedIndex { get; private set; } = 0;
 
 		public void Run() {
@@ -24,13 +24,13 @@ namespace Utilities {
 
 				if (key == ConsoleKey.DownArrow) {
 					SelectedIndex++;
-					SelectedIndex = SelectedIndex >= _options.Length ? 0 : SelectedIndex;
+					SelectedIndex = SelectedIndex >= Options.Length ? 0 : SelectedIndex;
 					continue;
 				}
 
 				if (key == ConsoleKey.UpArrow) {
 					SelectedIndex--;
-					SelectedIndex = SelectedIndex < 0 ? _options.Length - 1 : SelectedIndex;
+					SelectedIndex = SelectedIndex < 0 ? Options.Length - 1 : SelectedIndex;
 					continue;
 				}
 
@@ -44,14 +44,14 @@ namespace Utilities {
 
 		private void DisplayOptions() {
 			Console.WriteLine($"{_title}\n");
-			for (int i = 0; i < _options.Length; i++) {
+			for (int i = 0; i < Options.Length; i++) {
 				if (i == SelectedIndex) {
 					Console.ForegroundColor = ConsoleColor.Cyan;
-					Console.WriteLine($"> {_options[i]}");
+					Console.WriteLine($"> {Options[i]}");
 					Console.ForegroundColor = ConsoleColor.White;
 				}
 				else {
-					Console.WriteLine($"  {_options[i]}");
+					Console.WriteLine($"  {Options[i]}");
 				}
 			}
 		}

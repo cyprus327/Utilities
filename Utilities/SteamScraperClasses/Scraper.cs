@@ -34,14 +34,102 @@ internal static class Scraper {
 	private static string GetSearchFilter() {
 		StringBuilder sb = new StringBuilder();
 
-		Console.WriteLine("Free to play games only? (Y/N)");
-		string response = Console.ReadKey().KeyChar.ToString().ToLower();
-		Console.WriteLine();
-		
-		if (response == "y") {
-			sb.Append("&maxprice=free");
+		bool[] picked = { false, false, false, false, false, false, false, false };
+		Utilities.Menu menu = new Utilities.Menu("Select search filters:", new string[] {
+			"Free to play",
+			"FPS",
+			"Action",
+			"Indie",
+			"Singleplayer",
+			"Multiplayer",
+			"Casual",
+			"Adventure\n",
+			"Clear Filters"
+		});
+
+		bool tags = false;
+		while (true) {
+			menu.Run();
+
+			if (menu.SelectedIndex == -1) break;
+			switch (menu.SelectedIndex) {
+				case 0:
+					if (picked[0]) break;
+                    menu.Options[0] += " *";
+                    sb.Append("&maxprice=free", 0, 14);
+					break;
+				case 1:
+					if (picked[1]) break;
+					menu.Options[1] += " *";
+					if (tags)
+                        sb.Append("%2C1663");
+                    else
+                        sb.Append("&tags=1663");
+                    tags = true;
+					break;
+                case 2:
+                    if (picked[2]) break;
+                    menu.Options[2] += " *";
+                    if (tags) 
+						sb.Append("%2C19");
+                    else 
+						sb.Append("&tags=19");
+                    tags = true;
+                    break;
+                case 3:
+                    if (picked[3]) break;
+                    menu.Options[3] += " *";
+                    if (tags) 
+						sb.Append("%2C492");
+                    else 
+						sb.Append("&tags=492");
+                    tags = true;
+                    break;
+                case 4:
+                    if (picked[4]) break;
+                    menu.Options[4] += " *";
+                    if (tags)
+                        sb.Append("%2C4182");
+                    else
+                        sb.Append("&tags=4182");
+                    tags = true;
+                    break;
+                case 5:
+                    if (picked[5]) break;
+                    menu.Options[5] += " *";
+                    if (tags)
+                        sb.Append("%2C3859");
+                    else
+                        sb.Append("&tags=3859");
+                    tags = true;
+                    break;
+                case 6:
+                    if (picked[6]) break;
+                    menu.Options[6] += " *";
+                    if (tags)
+                        sb.Append("%2C597");
+                    else
+                        sb.Append("&tags=597");
+                    tags = true;
+                    break;
+                case 7:
+                    if (picked[7]) break;
+                    menu.Options[7] += " *";
+                    if (tags)
+                        sb.Append("%2C21");
+                    else
+                        sb.Append("&tags=21");
+                    tags = true;
+                    break;
+                case 8:
+                    picked = new bool[8] { false, false, false, false, false, false, false, false };
+					sb.Clear();
+					break;
+            }
 		}
-		
+
+        Console.WriteLine("\nFinding game...");
+
 		return sb.ToString();
 	}
 }
