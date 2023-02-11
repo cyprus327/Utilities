@@ -72,7 +72,7 @@ namespace Utilities {
 	            case '-': return a - b;
 	            case '*': return a * b;
 	            case '/': return a / b;
-	            default: throw new ArgumentException("Invalid operator");
+				default: throw new ArgumentException("Invalid operator: " + op);
 	        }
 	    }
 	}

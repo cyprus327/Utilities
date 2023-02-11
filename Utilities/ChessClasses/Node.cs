@@ -14,7 +14,7 @@ namespace Utilities {
 
 		public List<Node> GenerateChildren() {
 		    List<Node> children = new List<Node>();
-		
+			
 		    for (int row = 0; row < 8; row++) {
 		        for (int col = 0; col < 8; col++) {
 		            Piece piece = Board[row, col];
@@ -24,7 +24,7 @@ namespace Utilities {
 						for (int destCol = 0; destCol < 8; destCol++) {
 							if (!piece.CanMove(destRow, destCol, Board)) continue;
 							
-							Piece[,] newBoard = (Piece[,]) this.Board.Clone();
+							Piece[,] newBoard = (Piece[,])Board.Clone();
 							newBoard[destRow, destCol] = Board[row, col];
 							newBoard[row, col] = null;
 							children.Add(new Node(newBoard, Player == 'w' ? 'b' : 'w'));
@@ -39,25 +39,16 @@ namespace Utilities {
 		private int EvaluateBoard() {
 			int score = 0;
 
-			for (int row = 0; row < 8; row++) {
-				for (int col = 0; col < 8; col++) {
-					if (Board[row, col] == null) continue;
-					
-					if (Board[row, col].Symbol == Player) {
-						//if (Board[row, col] is King && 
-						//	Piece.PieceInCheck(Board[row, col], Board)) return int.MinValue;
-						
-						score += Board[row, col].Value;
-						//if (row > 1 && row < 6 && col > 1 && col < 6) score *= 3;
-					}
-					else {
-						//if (Board[row, col] is King && 
-						//	Piece.PieceInCheck(Board[row, col], Board)) return int.MaxValue;
-						
-						score -= Board[row, col].Value;
-					}
+			void GetScore(Piece x) {
+				if (x.Symbol == Player) {
+					score += x.Value;
+				}
+				else {
+					score -= x.Value;
 				}
 			}
+			
+			Piece.DoForAll(Board, x => GetScore(x));
 
 			return score;
 		}

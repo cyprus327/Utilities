@@ -4,48 +4,6 @@ using System.Security.Cryptography;
 
 namespace Utilities {
     internal static class Chess {
-		public static void StepThroughMoves(bool pawnsEnabled = true) {
-			InitializeBoard(out Piece[,] board);
-
-			if (!pawnsEnabled) {
-				for (int i = 0; i < 8; i++) {
-					board[1, i] = null;
-					board[6, i] = null;
-				}
-			}
-
-			Console.CursorVisible = false;
-			for (int row = 0; row < 8; row++) {
-				for (int col = 0; col < 8; col++) {
-					if (board[row, col] == null) continue;
-					Piece piece = board[row, col];
-					for (int destRow = 0; destRow < 8; destRow++) {
-						for (int destCol = 0; destCol < 8; destCol++) {
-							if (!piece.CanMove(destRow, destCol, board)) continue;
-							//Piece[,] copyBoard = (Piece[,])board.Clone();
-							//copyBoard[destRow, destCol] = copyBoard[row, col];
-							//copyBoard[row, col] = null;
-							Console.Clear();
-							Console.Write(new string('\n', destRow));
-							Console.Write(new string(' ', destCol));
-							Console.Write(board[row, col].Name);
-							//DrawBoard(copyBoard);
-							System.Threading.Thread.Sleep(10);
-						}
-					}
-				}
-			}
-			Console.CursorVisible = true;
-
-			if (pawnsEnabled) {
-				StepThroughMoves(false);
-				return;
-			}
-			
-			Console.WriteLine("\nPress any key to continue...");
-			Console.ReadKey(true);
-		}
-		
         public static void PlayVsHuman() {
             InitializeBoard(out Piece[,] board);
 			
@@ -55,6 +13,8 @@ namespace Utilities {
 
 			char winner = ' ';
             do {
+				DrawHighlightedBoard(board);
+				
                 Console.WriteLine($"\n{(currentPlayer == 'w' ? "White" : "Black")}'s move:");
                 Console.Write("> ");
                 
@@ -79,15 +39,14 @@ namespace Utilities {
 		public static void PlayVsAI() {
 			InitializeBoard(out Piece[,] board);
 
-			Console.Clear();
-			DrawBoard(board);
-			
 			char currentPlayer = 'w';
 			
 			char winner = ' ';
 			do {
 				if (currentPlayer == 'w') {
-					Console.WriteLine("\nYour move. (White)");
+					DrawHighlightedBoard(board);
+					
+					Console.WriteLine("\nEnter your move. (White)");
 					Console.Write("> ");
 
 					string move = Console.ReadLine() ?? "";
@@ -114,6 +73,32 @@ namespace Utilities {
 			DrawBoard(board);
 			Console.WriteLine($"\n{(winner == 'w' ? "White" : "Black")} wins.");
 			Console.ReadKey(true);
+		}
+
+		private static void DrawHighlightedBoard(Piece[,] board) {
+			int row = 0, col = 0;
+
+			while (true) {
+				Console.Clear();
+				DrawBoard(board, row, col);
+				
+				var key = Console.ReadKey(true);
+				if (key.Key == ConsoleKey.LeftArrow) {
+					if (col > 0) col--;
+				}
+				else if (key.Key == ConsoleKey.RightArrow) {
+					if (col < 7) col++;
+				}
+				else if (key.Key == ConsoleKey.UpArrow) {
+					if (row > 0) row--;
+				}
+				else if (key.Key == ConsoleKey.DownArrow) {
+					if (row < 7) row++;
+				}
+				else if (key.Key == ConsoleKey.Escape) {
+					break;
+				}
+			}
 		}
 
 		private static bool HandlePlayerMove(char player, string move, Piece[,] board) {
@@ -168,7 +153,7 @@ namespace Utilities {
 							newBoard[destRow, destCol] = newBoard[row, col];
 							newBoard[row, col] = null;
 
-							int value = KillerMoveMinimax(new Node(newBoard, ai), 2, int.MinValue, int.MaxValue, true);
+							int value = KillerMoveMinimax(new Node(newBoard, ai), 3, int.MinValue, int.MaxValue, true);
 							if (value > bestValue) {
 								bestMoves.Clear();
 								bestMoves.Add((row, col, destRow, destCol));
@@ -287,7 +272,27 @@ namespace Utilities {
 			return false; 
 		}
 		
-        private static void DrawBoard(Piece[,] board, List<Piece> additionals = null) {
+        private static void DrawBoard(Piece[,] board, int selectedRow = -1, int selectedCol = -1) {
+			List<(int, int)> moves = null;
+			if (selectedRow != -1 && selectedCol != -1) {
+				moves = new List<(int, int)>();
+				moves.Add((selectedRow, selectedCol));
+				for (int row = 0; row < 8; row++) {
+					if (board[selectedRow, selectedCol] == null) break;
+					
+					for (int col = 0; col < 8; col++) {
+						if (row != selectedRow || col != selectedCol) continue;
+						
+						for (int destRow = 0; destRow < 8; destRow++) {
+							for (int destCol = 0; destCol < 8; destCol++) {
+								if (!board[selectedRow, selectedCol].CanMove(destRow, destCol, board)) continue;
+								moves.Add((destRow, destCol));
+							}
+						}
+					}
+				}
+			}
+			
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("   a b c d e f g h");
             Console.ForegroundColor = ConsoleColor.Blue;
@@ -298,27 +303,27 @@ namespace Utilities {
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.Write(" |");
                 for (int col = 0; col < 7; col++) {
-                    if (board[row, col] == null) {
+					if (moves != null && moves.Contains((row, col))) {
+						Console.ForegroundColor = ConsoleColor.Magenta;
+						if (board[row, col] == null) Console.Write("- ");
+						else Console.Write($"{board[row, col].Name} ");
+					}
+					else if (board[row, col] == null) {
                         Console.ForegroundColor = ConsoleColor.Gray;
                         Console.Write("- ");
                     }
-					else if (additionals != null && additionals.Contains(board[row, col])) {
-						Console.ForegroundColor = ConsoleColor.Green;
-						for (int destRow = 0; destRow < 8; destRow++) {
-							for (int destCol = 0; destCol < 8; destCol++) {
-								if (!board[row, col].CanMove(destRow, destCol, board)) continue;
-
-                        		Console.Write($"{board[row, col].Name} ");
-							}
-						}
-					}
                     else {
                         Console.ForegroundColor = board[row, col].Symbol == 'w' ? ConsoleColor.White : ConsoleColor.DarkGray;
                         Console.Write($"{board[row, col].Name} ");
                     }
                 }
 
-                if (board[row, 7] == null) {
+				if (moves != null && moves.Contains((row, 7))) {
+					Console.ForegroundColor = ConsoleColor.Magenta;
+					if (board[row, 7] == null) Console.Write("-");
+					else Console.Write(board[row, 7].Name);
+				}
+				else if (board[row, 7] == null) {
                     Console.ForegroundColor = ConsoleColor.Gray;
                     Console.Write("-");
                 }
@@ -336,7 +341,7 @@ namespace Utilities {
         private static void InitializeBoard(out Piece[,] board) {
             board = new Piece[8, 8];
 
-            // white
+            // black
             board[0, 0] = new Rook(0, 0, 'b');
             board[0, 1] = new Knight(0, 1, 'b');
             board[0, 2] = new Bishop(0, 2, 'b');
@@ -349,7 +354,7 @@ namespace Utilities {
                 board[1, i] = new Pawn(1, i, 'b');
             }
 
-            // black
+            // white
             board[7, 0] = new Rook(7, 0, 'w');
             board[7, 1] = new Knight(7, 1, 'w');
             board[7, 2] = new Bishop(7, 2, 'w');

@@ -33,6 +33,11 @@ namespace Utilities {
 					SelectedIndex = SelectedIndex < 0 ? _options.Length - 1 : SelectedIndex;
 					continue;
 				}
+
+				if (key == ConsoleKey.Escape) {
+					SelectedIndex = -1;
+					return;
+				}
 			}
 			while (key != ConsoleKey.Enter);
 		}

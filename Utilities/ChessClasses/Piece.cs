@@ -15,10 +15,10 @@ namespace Utilities {
         public abstract bool CanMove(int destRow, int destCol, Piece[,] board);
 		
 		public static void Move(int row, int col, int destRow, int destCol, Piece[,] board) {
-			board[row, col].Row = destRow;
-			board[row, col].Col = destCol;
 			board[destRow, destCol] = board[row, col];
 			board[row, col] = null;
+			board[destRow, destCol].Row = destRow;
+			board[destRow, destCol].Col = destCol;
 		}
 		
         public static bool CoordsOnBoard(int row, int col) {
@@ -42,6 +42,15 @@ namespace Utilities {
             }
             return false;
         }
+
+		public static void DoForAll<Piece>(Piece[,] board, Action<Piece> body) {
+			for (int row = 0; row < 8; row++) {
+				for (int col = 0; col < 8; col++) {
+					if (board[row, col] == null) continue;
+					body(board[row, col]);
+				}
+			}
+		}
     }
 
     internal class King : Piece {

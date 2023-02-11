@@ -26,10 +26,6 @@ namespace Utilities {
 					case ConsoleKey.RightArrow:
 						if (cursorInd < str.Length) cursorInd++;
 						break;
-					case ConsoleKey.Enter:
-						sb.Insert(cursorInd, "\n");
-						cursorInd++;
-						break;
 					case ConsoleKey.Backspace:
 						if (cursorInd > 0) {
 							sb.Remove(cursorInd - 1, 1);
@@ -38,6 +34,11 @@ namespace Utilities {
 						break;
 					case ConsoleKey.Escape:
 						Console.Clear();
+						Console.CursorVisible = true;
+						return sb.ToString();
+					case ConsoleKey.Enter:
+						Console.Clear();
+						Console.CursorVisible = true;
 						return sb.ToString();
 					default:
 						sb.Insert(cursorInd, key.KeyChar);
