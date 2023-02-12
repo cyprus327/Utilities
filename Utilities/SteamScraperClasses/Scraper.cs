@@ -33,7 +33,7 @@ internal static class Scraper {
 
 	private static string GetSearchFilter() {
 		StringBuilder sb = new StringBuilder();
-
+		bool tags = false;
 		bool[] picked = { false, false, false, false, false, false, false, false };
 		Utilities.Menu menu = new Utilities.Menu("Select search filters:", new string[] {
 			"Free to play",
@@ -47,7 +47,20 @@ internal static class Scraper {
 			"Clear Filters"
 		});
 
-		bool tags = false;
+        void Add(int index, string code) {
+            if (picked[index]) return;
+            
+            menu.Options[index] += " *";
+
+            if (tags)
+                sb.Append($"%2C{code}");
+            else
+                sb.Append($"&tags={code}");
+
+            if (!tags) tags = true;
+
+        }
+
 		while (true) {
 			menu.Run();
 
@@ -59,71 +72,32 @@ internal static class Scraper {
                     sb.Append("&maxprice=free", 0, 14);
 					break;
 				case 1:
-					if (picked[1]) break;
-					menu.Options[1] += " *";
-					if (tags)
-                        sb.Append("%2C1663");
-                    else
-                        sb.Append("&tags=1663");
-                    tags = true;
+                    Add(1, "1663");
 					break;
                 case 2:
-                    if (picked[2]) break;
-                    menu.Options[2] += " *";
-                    if (tags) 
-						sb.Append("%2C19");
-                    else 
-						sb.Append("&tags=19");
-                    tags = true;
+                    Add(2, "19");
                     break;
                 case 3:
-                    if (picked[3]) break;
-                    menu.Options[3] += " *";
-                    if (tags) 
-						sb.Append("%2C492");
-                    else 
-						sb.Append("&tags=492");
-                    tags = true;
+                    Add(3, "492");
                     break;
                 case 4:
-                    if (picked[4]) break;
-                    menu.Options[4] += " *";
-                    if (tags)
-                        sb.Append("%2C4182");
-                    else
-                        sb.Append("&tags=4182");
-                    tags = true;
+                    Add(4, "4182");
                     break;
                 case 5:
-                    if (picked[5]) break;
-                    menu.Options[5] += " *";
-                    if (tags)
-                        sb.Append("%2C3859");
-                    else
-                        sb.Append("&tags=3859");
-                    tags = true;
+                    Add(5, "3859");
                     break;
                 case 6:
+                    Add(6, "597");
                     if (picked[6]) break;
-                    menu.Options[6] += " *";
-                    if (tags)
-                        sb.Append("%2C597");
-                    else
-                        sb.Append("&tags=597");
-                    tags = true;
                     break;
                 case 7:
+					Add(7, "21");
                     if (picked[7]) break;
-                    menu.Options[7] += " *";
-                    if (tags)
-                        sb.Append("%2C21");
-                    else
-                        sb.Append("&tags=21");
-                    tags = true;
                     break;
                 case 8:
                     picked = new bool[8] { false, false, false, false, false, false, false, false };
 					sb.Clear();
+                    tags = false;
 					break;
             }
 		}

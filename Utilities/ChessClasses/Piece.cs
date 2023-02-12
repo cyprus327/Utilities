@@ -58,7 +58,7 @@ namespace Utilities {
             Col = col;
             Row = row;
             Symbol = symbol;
-			Value = int.MaxValue;
+			Value = 10000;
             Name = "K";
         }
 

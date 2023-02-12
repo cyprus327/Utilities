@@ -6,22 +6,12 @@ namespace Utilities {
     internal static class Chess {
         public static void PlayVsHuman() {
             InitializeBoard(out Piece[,] board);
-			
-			Console.Clear();
-            DrawBoard(board);
+
             char currentPlayer = 'w';
 
-			char winner = ' ';
+			char winner;
             do {
-				DrawHighlightedBoard(board);
-				
-                Console.WriteLine($"\n{(currentPlayer == 'w' ? "White" : "Black")}'s move:");
-                Console.Write("> ");
-                
-				string move = Console.ReadLine() ?? "";
-				if (move == "exit") break;
-                
-				if (!HandlePlayerMove(currentPlayer, move, board)) continue;
+				HandlePlayerMove(currentPlayer, board);
 				
                 Console.Clear();
                 DrawBoard(board);
@@ -41,25 +31,17 @@ namespace Utilities {
 
 			char currentPlayer = 'w';
 			
-			char winner = ' ';
+			char winner;
 			do {
 				if (currentPlayer == 'w') {
-					DrawHighlightedBoard(board);
-					
-					Console.WriteLine("\nEnter your move. (White)");
-					Console.Write("> ");
-
-					string move = Console.ReadLine() ?? "";
-					if (move == "exit") break;
-
-					if (!HandlePlayerMove('w', move, board)) continue;
+					HandlePlayerMove(currentPlayer, board);
 
 					Console.Clear();
 					DrawBoard(board);
 				}
 				else {
 					Console.WriteLine("\nAIs move...");
-					HandleAIMove('b', board);
+					HandleAIMove(currentPlayer, board);
 
 					Console.Clear();
 					DrawBoard(board);
@@ -75,7 +57,7 @@ namespace Utilities {
 			Console.ReadKey(true);
 		}
 
-		private static void DrawHighlightedBoard(Piece[,] board) {
+		private static void HandlePlayerMove(char player, Piece[,] board) {
 			int row = 0, col = 0;
 
 			while (true) {
@@ -95,46 +77,46 @@ namespace Utilities {
 				else if (key.Key == ConsoleKey.DownArrow) {
 					if (row < 7) row++;
 				}
+				else if (key.Key == ConsoleKey.Enter) {
+					if (board[row, col] == null || board[row, col].Symbol != player) continue;
+
+					List<(int, int)> moves = new List<(int, int)>();
+					for (int destRow = 0; destRow < 8; destRow++) {
+						for (int destCol = 0; destCol < 8; destCol++) {
+							if (!board[row, col].CanMove(destRow, destCol, board)) continue;
+							moves.Add((destRow, destCol));
+						}
+					}
+
+					if (moves.Count == 0) return;
+
+					int index = 0;
+					while (true) {
+						Console.Clear();
+						DrawBoard(board, row, col, moves[index].Item1, moves[index].Item2);
+
+						key = Console.ReadKey(true);
+						if (key.Key == ConsoleKey.LeftArrow) {
+							index--;
+							index = index < 0 ? moves.Count - 1 : index;
+						}
+						else if (key.Key == ConsoleKey.RightArrow) {
+							index++;
+							index = index >= moves.Count ? 0 : index;
+						}
+						else if (key.Key == ConsoleKey.Enter) {
+							Piece.Move(row, col, moves[index].Item1, moves[index].Item2, board);
+							return;
+						}
+						else if (key.Key == ConsoleKey.Escape) {
+							break;
+						}
+					}
+				}
 				else if (key.Key == ConsoleKey.Escape) {
-					break;
+					return;
 				}
 			}
-		}
-
-		private static bool HandlePlayerMove(char player, string move, Piece[,] board) {
-			string[] moveCoords = move.Split(' ');
-			if (moveCoords.Length != 2) {
-				Console.WriteLine("Invalid move format. Please enter your move in the format 'e2 e4'.");
-				return false;
-			}
-			if (!int.TryParse(moveCoords[0][1].ToString(), out int startRow) || 
-				!int.TryParse(moveCoords[1][1].ToString(), out int destRow)) {
-				Console.WriteLine("Invalid move format. Enter moves in the format 'e2 e4'.");
-				return false;
-			}
-			startRow = 8 - startRow;
-			destRow = 8 - destRow;
-			int startCol = moveCoords[0][0] - 'a';
-			int destCol = moveCoords[1][0] - 'a';
-
-			if (!Piece.CoordsOnBoard(startRow, startCol) || !Piece.CoordsOnBoard(destRow, destCol)) {
-				Console.WriteLine("Invalid move. Please enter a move that is within the chess board.");
-				return false;
-			}
-
-			Piece piece = board[startRow, startCol];
-			if (piece == null || piece.Symbol != player) {
-				Console.WriteLine($"Invalid move. You can only move your own pieces.");
-				return false;
-			}
-			if (!piece.CanMove(destRow, destCol, board)) {
-				Console.WriteLine("Invalid move. That piece cannot move to that location.");
-				return false;
-			}
-
-			Piece.Move(piece.Row, piece.Col, destRow, destCol, board);
-
-			return true;
 		}
 
 		private static void HandleAIMove(char ai, Piece[,] board) {
@@ -240,43 +222,13 @@ namespace Utilities {
 				return true;
 			}
 
-			/*for (int row = 0; row < 8; row++) {
-				for (int col = 0; col < 8; col++) {
-					Piece piece = board[row, col];
-					if (piece == null || piece.Name != "K") continue;
-		
-					if (!Piece.PieceInCheck(piece, board)) continue;
-		
-					bool hasEscape = false;
-					for (int destRow = 0; destRow < 8; destRow++) {
-						for (int destCol = 0; destCol < 8; destCol++) {
-							if (!piece.CanMove(destRow, destCol, board)) continue;
-		
-							Piece[,] newBoard = (Piece[,])board.Clone();
-							newBoard[destRow, destCol] = piece;
-							newBoard[row, col] = null;
-		
-							if (!Piece.PieceInCheck(piece, newBoard)) {
-								hasEscape = true;
-								break;
-							}
-						}
-						if (hasEscape) break;
-					}
-					if (!hasEscape) {
-						winner = piece.Symbol == 'w' ? 'b' : 'w';
-						return true;
-					}
-				}
-			} */
 			return false; 
 		}
 		
-        private static void DrawBoard(Piece[,] board, int selectedRow = -1, int selectedCol = -1) {
+        private static void DrawBoard(Piece[,] board, int selectedRow = -1, int selectedCol = -1, int hRow = -1, int hCol = -1) {
 			List<(int, int)> moves = null;
 			if (selectedRow != -1 && selectedCol != -1) {
-				moves = new List<(int, int)>();
-				moves.Add((selectedRow, selectedCol));
+				moves = new List<(int, int)>() { (selectedRow, selectedCol) };
 				for (int row = 0; row < 8; row++) {
 					if (board[selectedRow, selectedCol] == null) break;
 					
@@ -303,7 +255,12 @@ namespace Utilities {
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.Write(" |");
                 for (int col = 0; col < 7; col++) {
-					if (moves != null && moves.Contains((row, col))) {
+					if (row == hRow && col == hCol) {
+						Console.ForegroundColor = ConsoleColor.Green;
+                        if (board[row, col] == null) Console.Write("- ");
+                        else Console.Write($"{board[row, col].Name} ");
+                    }
+					else if (moves != null && moves.Contains((row, col))) {
 						Console.ForegroundColor = ConsoleColor.Magenta;
 						if (board[row, col] == null) Console.Write("- ");
 						else Console.Write($"{board[row, col].Name} ");
@@ -318,7 +275,12 @@ namespace Utilities {
                     }
                 }
 
-				if (moves != null && moves.Contains((row, 7))) {
+				if (row == hRow && 7 == hCol) {
+					Console.ForegroundColor = ConsoleColor.Green;
+					if (board[row, 7] == null) Console.Write("-");
+					else Console.Write(board[row, 7].Name);
+				}
+				else if (moves != null && moves.Contains((row, 7))) {
 					Console.ForegroundColor = ConsoleColor.Magenta;
 					if (board[row, 7] == null) Console.Write("-");
 					else Console.Write(board[row, 7].Name);

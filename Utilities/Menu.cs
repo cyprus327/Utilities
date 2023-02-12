@@ -5,12 +5,11 @@ using System.Collections.Generic;
 namespace Utilities {
 	internal class Menu {
 		public Menu(string title, string[] options) {
-			_title = title;
+			Title = title;
 			Options = options;
 		}
 
-		readonly string _title;
-		
+		public string Title { get; set; }
 		public string[] Options { get; set; }
 		public int SelectedIndex { get; private set; } = 0;
 
@@ -43,7 +42,7 @@ namespace Utilities {
 		}
 
 		private void DisplayOptions() {
-			Console.WriteLine($"{_title}\n");
+			Console.WriteLine($"{Title}\n");
 			for (int i = 0; i < Options.Length; i++) {
 				if (i == SelectedIndex) {
 					Console.ForegroundColor = ConsoleColor.Cyan;

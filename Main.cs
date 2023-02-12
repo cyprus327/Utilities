@@ -68,7 +68,7 @@ internal class Program {
 			string expression = BetterInput.Read();
 			if (expression == "exit" || expression == "") return;
 			
-			if (expression.Contains("=")) {
+			if (expression.Contains('=')) {
 				Display("Enter one side only, e.g. 9.5 / (1 - 4)\n", ConsoleColor.Red);
 				RunCalculator();
 			}
@@ -76,7 +76,7 @@ internal class Program {
 			double result = Evaluator.EvaluateExpression(expression);
 			Display(expression, ConsoleColor.White);
 			Display(" = ", ConsoleColor.Cyan);
-			Display($"{result.ToString()}\n", ConsoleColor.Blue);
+			Display($"{result}\n", ConsoleColor.Blue);
 			
 			var key = Console.ReadKey(true).Key;
 			if (key == ConsoleKey.Escape) return;
