@@ -5,11 +5,11 @@ using System.Text;
 using System.Linq;
 using System.IO;
 
-namespace Utilities {
+namespace Utilities.PMUtil {
     internal static class Encryptor {
         static string SEC = "qwertyuiopasdfghjklzxcvbnm,./;=-!@#$%^&*()1234567890\\~`\n\n\n\t\t\t";
         const string PRED = "Manager";
-		const char S = '/';
+		const char S = '\\';
 
         public static void Init() {
 			if (Directory.Exists(PRED)) {

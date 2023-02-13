@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Utilities {
+namespace Utilities.ChessUtil {
 	internal class Node {
 		public Node(Piece[,] board, char player) {
 			Board = board;

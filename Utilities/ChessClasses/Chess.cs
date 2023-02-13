@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-namespace Utilities {
+namespace Utilities.ChessUtil {
     internal static class Chess {
         public static void PlayVsHuman() {
             InitializeBoard(out Piece[,] board);

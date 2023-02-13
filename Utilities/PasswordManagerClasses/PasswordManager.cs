@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 
-namespace Utilities {
+namespace Utilities.PMUtil {
 	internal static class PasswordManager {
 		public static void GetPass(string key) {
 	        string? pass = Encryptor.GetPassword(key);
@@ -51,8 +51,8 @@ namespace Utilities {
 			if (!Encryptor.PromptMasterPassword()) return;
 
 			string[] keys = Encryptor.GetAll();
-			Menu menu = new Menu("Select a key:", keys);
-			menu.Run();
+			MenuUtil.Menu menu = new MenuUtil.Menu("Select a key:", keys);
+			menu.Run(MenuUtil.MenuOptions.None);
 			Console.WriteLine();
 			for (int i = 0; i < keys.Length; i++) {
 				if (keys[i] == keys[menu.SelectedIndex]) {
@@ -71,8 +71,8 @@ namespace Utilities {
 			Console.Clear();
 			
 			string[] keys = Encryptor.GetAll();
-			Menu menu = new Menu("Select a key:", keys);
-			menu.Run();
+            MenuUtil.Menu menu = new MenuUtil.Menu("Select a key:", keys);
+			menu.Run(MenuUtil.MenuOptions.None);
 			Console.WriteLine();
 			for (int  i = 0; i < keys.Length; i++) {
 				if (keys[i] == keys[menu.SelectedIndex]) {

@@ -1,20 +1,25 @@
 using System;
 using System.Collections.Generic;
 
-namespace Utilities {
+namespace Utilities.CalcUtil {
 	internal static class Evaluator {
 		public static double EvaluateExpression(string expression) {
+			expression = expression.Replace(" ", "");
+
 	        if (expression.Length == 1 && double.TryParse(expression, out double num)) {
 	            return num;
 	        }
 	
 	        Stack<double> numbers = new Stack<double>();
 	        Stack<char> operators = new Stack<char>();
-	
+
+			char currentChar;
 	        for (int i = 0; i < expression.Length; i++) {
-	            char currentChar = expression[i];
+	            currentChar = expression[i];
 	
 	            if (char.IsDigit(currentChar) || currentChar == '.') {
+					bool negative = false;
+					if (i > 0 && expression[i - 1] == '-') negative = true;
 	                string currentNumberStr = currentChar.ToString();
 	                while (i + 1 < expression.Length && (char.IsDigit(expression[i + 1]) || expression[i + 1] == '.')) {
 	                    currentNumberStr += expression[i + 1];
@@ -23,7 +28,7 @@ namespace Utilities {
 	                if (!double.TryParse(currentNumberStr, out double currentNumber)) {
 	                    throw new ArgumentException("Invalid number format");
 	                }
-	                numbers.Push(currentNumber);
+	                numbers.Push(negative ? -currentNumber : currentNumber);
 	            }
 	            else if (currentChar == '(') {
 	                operators.Push(currentChar);
@@ -38,6 +43,7 @@ namespace Utilities {
 	                operators.Pop();
 	            }
 	            else if (currentChar == '+' || currentChar == '-' || currentChar == '*' || currentChar == '/') {
+					if (currentChar == '-' && i < expression.Length - 1 && char.IsDigit(expression[i + 1])) continue;
 	                while (operators.Count > 0 && HasPrecedence(currentChar, operators.Peek())) {
 	                    double secondOperand = numbers.Pop();
 	                    double firstOperand = numbers.Pop();

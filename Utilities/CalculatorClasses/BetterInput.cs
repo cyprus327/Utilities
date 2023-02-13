@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace Utilities {
+namespace Utilities.CalcUtil {
 	internal static class BetterInput {
 		public static string Read() {
 			StringBuilder sb = new StringBuilder();

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Utilities {
+namespace Utilities.MenuUtil {
 	internal class Menu {
 		public Menu(string title, string[] options) {
 			Title = title;
@@ -13,11 +13,11 @@ namespace Utilities {
 		public string[] Options { get; set; }
 		public int SelectedIndex { get; private set; } = 0;
 
-		public void Run() {
+		public void Run(MenuOptions? options = null) {
 			ConsoleKey key;
 			do {
 				Console.Clear();
-				DisplayOptions();
+				DisplayOptions(options ?? MenuOptions.LargeTitle);
 
 				key = Console.ReadKey(true).Key;
 
@@ -41,8 +41,15 @@ namespace Utilities {
 			while (key != ConsoleKey.Enter);
 		}
 
-		private void DisplayOptions() {
-			Console.WriteLine($"{Title}\n");
+		private void DisplayOptions(MenuOptions options) {
+			if (MenuOptions.LargeTitle == options) {
+				Console.WriteLine(ASCIIGenerator.Generate(Title));
+			}
+			else {
+				Console.WriteLine(Title);
+			}
+
+			Console.WriteLine();
 			for (int i = 0; i < Options.Length; i++) {
 				if (i == SelectedIndex) {
 					Console.ForegroundColor = ConsoleColor.Cyan;
@@ -54,5 +61,10 @@ namespace Utilities {
 				}
 			}
 		}
+	}
+
+	internal enum MenuOptions {
+		None = 0,
+		LargeTitle = 1,
 	}
 }

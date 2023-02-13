@@ -1,4 +1,5 @@
 using Utilities;
+using Utilities.MenuUtil;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -33,14 +34,14 @@ internal class Program {
 		Console.Clear();
 		Console.WriteLine("Encrypting passwords...");
 		Console.WriteLine("Initalizing...\n");
-        Encryptor.Init();
-        Encryptor.Add("ebay", "EbayPass123");
-		Encryptor.Add("amazon", "123amazon321");
-		Encryptor.Add("gmail", "800G73");
-		Encryptor.Add("important", "password01");
+        Utilities.PMUtil.Encryptor.Init();
+        Utilities.PMUtil.Encryptor.Add("ebay", "EbayPass123");
+        Utilities.PMUtil.Encryptor.Add("amazon", "123amazon321");
+        Utilities.PMUtil.Encryptor.Add("gmail", "800G73");
+        Utilities.PMUtil.Encryptor.Add("important", "password01");
 		
         Console.Clear();
-        Menu menu = new Menu("Password Manager.", new string[] {
+        Menu menu = new Menu("Passwords.", new string[] {
 			"Select",
 			"Add",
 			"Remove",
@@ -52,10 +53,10 @@ internal class Program {
 	
 			switch (menu.SelectedIndex) {
 				case -1: return;
-				case 0: PasswordManager.PromptSelectKey(); break;
-				case 1: PasswordManager.PromptAddPass(); break;
-				case 2: PasswordManager.PromptRemovePass(); break;
-				case 3: PasswordManager.ShowAllPasswords(); break;
+				case 0: Utilities.PMUtil.PasswordManager.PromptSelectKey(); break;
+				case 1: Utilities.PMUtil.PasswordManager.PromptAddPass(); break;
+				case 2: Utilities.PMUtil.PasswordManager.PromptRemovePass(); break;
+				case 3: Utilities.PMUtil.PasswordManager.ShowAllPasswords(); break;
 			}
 		}
     }
@@ -65,7 +66,7 @@ internal class Program {
 		Console.WriteLine("Enter an expression or 'exit' to exit:");
 
 		while (true) {
-			string expression = BetterInput.Read();
+			string expression = Utilities.CalcUtil.BetterInput.Read();
 			if (expression == "exit" || expression == "") return;
 			
 			if (expression.Contains('=')) {
@@ -73,7 +74,7 @@ internal class Program {
 				RunCalculator();
 			}
 	
-			double result = Evaluator.EvaluateExpression(expression);
+			double result = Utilities.CalcUtil.Evaluator.EvaluateExpression(expression);
 			Display(expression, ConsoleColor.White);
 			Display(" = ", ConsoleColor.Cyan);
 			Display($"{result}\n", ConsoleColor.Blue);
@@ -94,14 +95,14 @@ internal class Program {
 
 			switch (menu.SelectedIndex) {
 				case -1: return;
-				case 0: Chess.PlayVsAI(); break;
-				case 1: Chess.PlayVsHuman(); break;
+				case 0: Utilities.ChessUtil.Chess.PlayVsAI(); break;
+				case 1: Utilities.ChessUtil.Chess.PlayVsHuman(); break;
 			}
 		}
 	}
 
 	private static void RunTicTacToe() {
-		Menu menu = new Menu("Tic Tac Toe.", new string[] {
+		Menu menu = new Menu("TicTacToe.", new string[] {
 			"AI opponent",
 			"Human opponent"
 		});
@@ -111,14 +112,14 @@ internal class Program {
 
 			switch (menu.SelectedIndex) {
 				case -1: return;
-				case 0: TicTacToe.PlayVsAI(); break;
-				case 1: TicTacToe.PlayVsHuman(); break;
+				case 0: Utilities.TTTUtil.TicTacToe.PlayVsAI(); break;
+				case 1: Utilities.TTTUtil.TicTacToe.PlayVsHuman(); break;
 			}
 		}
 	}
 
 	private static void RunSteamScraper() {
-		Menu menu = new Menu("Select amount of games to search.", new string[] {
+		Menu menu = new Menu("Find a game.", new string[] {
 			"Low",
 			"Medium",
 			"High",
@@ -133,8 +134,8 @@ internal class Program {
 			Console.WriteLine();
 			switch (menu.SelectedIndex) {
 				case -1: return;
-				case 0: 
-					Scraper.GenerateGames(out gameNames, 0, 5);
+				case 0:
+                    Utilities.SteamScraperUtil.Scraper.GenerateGames(out gameNames, 0, 5);
 					rand = RandomNumberGenerator.GetInt32(gameNames.Count - 1);
 					game = gameNames[rand];
 					Display("\nYou should play: ", ConsoleColor.Blue);
@@ -142,7 +143,7 @@ internal class Program {
 					Console.ReadKey(true);
 					break;
 				case 1:
-					Scraper.GenerateGames(out gameNames, 0, 12);
+                    Utilities.SteamScraperUtil.Scraper.GenerateGames(out gameNames, 0, 12);
 					rand = RandomNumberGenerator.GetInt32(gameNames.Count - 1);
 					game = gameNames[rand];
 					Display("\nYou should play: ", ConsoleColor.Blue);
@@ -150,7 +151,7 @@ internal class Program {
 					Console.ReadKey(true);
 					break;
 				case 2:
-					Scraper.GenerateGames(out gameNames, 0, 30);
+                    Utilities.SteamScraperUtil.Scraper.GenerateGames(out gameNames, 0, 30);
 					rand = RandomNumberGenerator.GetInt32(gameNames.Count - 1);
 					game = gameNames[rand];
 					Display("\nYou should play: ", ConsoleColor.Blue);

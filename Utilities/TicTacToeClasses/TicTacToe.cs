@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Utilities {
+namespace Utilities.TTTUtil {
 	internal static class TicTacToe {
 		static char[] squares = { '*', '*', '*', '*', '*', '*', '*', '*', '*' };
 		

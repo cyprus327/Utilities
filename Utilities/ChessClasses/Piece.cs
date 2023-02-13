@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Utilities {
+namespace Utilities.ChessUtil {
     internal abstract class Piece {
         public int Col { get; set; }
         public int Row { get; set; }
