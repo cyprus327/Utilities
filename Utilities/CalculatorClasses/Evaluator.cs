@@ -9,7 +9,7 @@ namespace Utilities.CalcUtil {
 	        if (expression.Length == 1 && double.TryParse(expression, out double num)) {
 	            return num;
 	        }
-	
+
 	        Stack<double> numbers = new Stack<double>();
 	        Stack<char> operators = new Stack<char>();
 
