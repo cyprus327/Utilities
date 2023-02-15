@@ -119,7 +119,7 @@ internal class Program {
 	}
 
 	private static void RunSteamScraper() {
-		Menu menu = new Menu("Find a game.", new string[] {
+		Menu menu = new Menu("Steam.", new string[] {
 			"Low",
 			"Medium",
 			"High",

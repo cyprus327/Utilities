@@ -34,8 +34,6 @@ namespace Utilities.SteamScraperUtil {
 
 		private static string GetSearchFilter() {
 			StringBuilder sb = new StringBuilder();
-			bool tags = false;
-			bool[] picked = { false, false, false, false, false, false, false, false };
 			MenuUtil.Menu menu = new MenuUtil.Menu("Select search filters:", new string[] {
 				"Free to play",
 				"FPS",
@@ -48,57 +46,50 @@ namespace Utilities.SteamScraperUtil {
 				"Clear Filters"
 			});
 
-			void Add(int index, string code) {
-				if (picked[index]) return;
-            
-				menu.Options[index] += " *";
+			void AddToURL(int index, string code) {
+				string str = sb.ToString();
+				if (str.Contains(code)) return;
 
-				if (tags)
+				menu.SelectOption(index);
+				if (str.Contains("&tags="))
 					sb.Append($"%2C{code}");
 				else
 					sb.Append($"&tags={code}");
-
-				if (!tags) tags = true;
-
 			}
 
 			while (true) {
-				menu.Run();
+				menu.Run(MenuUtil.MenuOptions.None);
 
 				if (menu.SelectedIndex == -1) break;
 				switch (menu.SelectedIndex) {
 					case 0:
-						if (picked[0]) break;
-						menu.Options[0] += " *";
+						if (sb.ToString().Contains("&maxprice=free")) break;
 						sb.Append("&maxprice=free", 0, 14);
 						break;
 					case 1:
-						Add(1, "1663");
+						AddToURL(1, "1663");
 						break;
 					case 2:
-						Add(2, "19");
+						AddToURL(2, "19");
 						break;
 					case 3:
-						Add(3, "492");
+						AddToURL(3, "492");
 						break;
 					case 4:
-						Add(4, "4182");
+						AddToURL(4, "4182");
 						break;
 					case 5:
-						Add(5, "3859");
+						AddToURL(4, "3859");
 						break;
 					case 6:
-						Add(6, "597");
-						if (picked[6]) break;
+						AddToURL(6, "597");
 						break;
 					case 7:
-						Add(7, "21");
-						if (picked[7]) break;
+						AddToURL(7, "21");
 						break;
 					case 8:
-						picked = new bool[8] { false, false, false, false, false, false, false, false };
 						sb.Clear();
-						tags = false;
+						menu.ResetOptions();
 						break;
 				}
 			}

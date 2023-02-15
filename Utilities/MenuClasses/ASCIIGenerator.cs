@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Utilities.MenuUtil {
     internal static class ASCIIGenerator {
+        #region symbols
         readonly static string[] A = {
             "   AA     ",
             "  AAAA    ",
@@ -277,48 +278,49 @@ namespace Utilities.MenuUtil {
         };
 
         readonly static Dictionary<char, string[]> characters = new Dictionary<char, string[]>() {
-        { 'A', A },
-        { 'B', B },
-        { 'C', C },
-        { 'D', D },
-        { 'E', E },
-        { 'F', F },
-        { 'G', G },
-        { 'H', H },
-        { 'I', I },
-        { 'J', J },
-        { 'K', K },
-        { 'L', L },
-        { 'M', M },
-        { 'N', N },
-        { 'O', O },
-        { 'P', P },
-        { 'Q', Q },
-        { 'R', R },
-        { 'S', S },
-        { 'T', T },
-        { 'U', U },
-        { 'V', V },
-        { 'W', W },
-        { 'Y', Y },
-        { 'X', X },
-        { 'Z', Z },
-        { '.', Period },
-    };
+            { 'A', A },
+            { 'B', B },
+            { 'C', C },
+            { 'D', D },
+            { 'E', E },
+            { 'F', F },
+            { 'G', G },
+            { 'H', H },
+            { 'I', I },
+            { 'J', J },
+            { 'K', K },
+            { 'L', L },
+            { 'M', M },
+            { 'N', N },
+            { 'O', O },
+            { 'P', P },
+            { 'Q', Q },
+            { 'R', R },
+            { 'S', S },
+            { 'T', T },
+            { 'U', U },
+            { 'V', V },
+            { 'W', W },
+            { 'Y', Y },
+            { 'X', X },
+            { 'Z', Z },
+            { '.', Period },
+        };
+        #endregion symbols
 
         public static string Generate(string text) {
             text = text.ToUpper();
 
-            int height = A.Length;
             StringBuilder output = new StringBuilder(text.Length);
 
-            for (int i = 0; i < height; i++) {
+            for (int i = 0; i < 7; i++) {
                 foreach (char c in text) {
                     if (characters.ContainsKey(c)) {
-                        output.Append(characters[c][i]);
+                        output.Append(characters[c][i].Select(c => c == ' ' ? ' ' : '#').ToArray());
+                        output.Append(" ");
                     }
                     else {
-                        output.Append(new string(' ', A[i].Length));
+                        output.Append(new string(' ', 10));
                     }
                 }
                 output.Append(Environment.NewLine);

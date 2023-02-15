@@ -13,53 +13,67 @@ namespace Utilities.CalcUtil {
 	        Stack<double> numbers = new Stack<double>();
 	        Stack<char> operators = new Stack<char>();
 
-			char currentChar;
-	        for (int i = 0; i < expression.Length; i++) {
-	            currentChar = expression[i];
-	
-	            if (char.IsDigit(currentChar) || currentChar == '.') {
+			try {
+				char currentChar;
+				for (int i = 0; i < expression.Length; i++) {
+					currentChar = expression[i];
+
 					bool negative = false;
-					if (i > 0 && expression[i - 1] == '-') negative = true;
-	                string currentNumberStr = currentChar.ToString();
-	                while (i + 1 < expression.Length && (char.IsDigit(expression[i + 1]) || expression[i + 1] == '.')) {
-	                    currentNumberStr += expression[i + 1];
-	                    i++;
-	                }
-	                if (!double.TryParse(currentNumberStr, out double currentNumber)) {
-	                    throw new ArgumentException("Invalid number format");
-	                }
-	                numbers.Push(negative ? -currentNumber : currentNumber);
-	            }
-	            else if (currentChar == '(') {
-	                operators.Push(currentChar);
-	            }
-	            else if (currentChar == ')') {
-	                while (operators.Peek() != '(') {
-	                    double secondOperand = numbers.Pop();
-	                    double firstOperand = numbers.Pop();
-	                    char operatorToApply = operators.Pop();
-	                    numbers.Push(ApplyOperator(firstOperand, secondOperand, operatorToApply));
-	                }
-	                operators.Pop();
-	            }
-	            else if (currentChar == '+' || currentChar == '-' || currentChar == '*' || currentChar == '/') {
-					if (currentChar == '-' && i < expression.Length - 1 && char.IsDigit(expression[i + 1])) continue;
-	                while (operators.Count > 0 && HasPrecedence(currentChar, operators.Peek())) {
-	                    double secondOperand = numbers.Pop();
-	                    double firstOperand = numbers.Pop();
-	                    char operatorToApply = operators.Pop();
-	                    numbers.Push(ApplyOperator(firstOperand, secondOperand, operatorToApply));
-	                }
-	                operators.Push(currentChar);
-	            }
-	        }
+					if (currentChar == '-') {
+						if (i == 0 || i > 0 && expression[i - 1] == '-' && (i > 1 ? !char.IsDigit(expression[i - 2]) : true)) {
+							negative = true;
+							i++;
+							currentChar = expression[i];
+						}
+					}
+
+					if (char.IsDigit(currentChar) || currentChar == '.') {
+                        string currentNumberStr = currentChar.ToString();
+						while (i + 1 < expression.Length && (char.IsDigit(expression[i + 1]) || expression[i + 1] == '.')) {
+							currentNumberStr += expression[i + 1];
+							i++;
+						}
+						if (!double.TryParse(currentNumberStr, out double currentNumber)) {
+							throw new ArgumentException("Invalid number format");
+						}
+						numbers.Push(negative ? -currentNumber : currentNumber);
+					}
+					else if (currentChar == '(') {
+						operators.Push(currentChar);
+					}
+					else if (currentChar == ')') {
+						while (operators.Peek() != '(') {
+							double secondOperand = numbers.Pop();
+							double firstOperand = numbers.Pop();
+							char operatorToApply = operators.Pop();
+							numbers.Push(ApplyOperator(firstOperand, secondOperand, operatorToApply));
+						}
+						operators.Pop();
+					}
+					else if (currentChar == '+' || currentChar == '-' || currentChar == '*' || currentChar == '/') {
+						while (operators.Count > 0 && HasPrecedence(currentChar, operators.Peek())) {
+							double secondOperand = numbers.Pop();
+							double firstOperand = numbers.Pop();
+							char operatorToApply = operators.Pop();
+							numbers.Push(ApplyOperator(firstOperand, secondOperand, operatorToApply));
+						}
+						operators.Push(currentChar);
+					}
+				}
 	
-	        while (operators.Count > 0) {
-	            double secondOperand = numbers.Pop();
-	            double firstOperand = numbers.Pop();
-	            char operatorToApply = operators.Pop();
-	            numbers.Push(ApplyOperator(firstOperand, secondOperand, operatorToApply));
-	        }
+				while (operators.Count > 0) {
+					double secondOperand = numbers.Pop();
+					double firstOperand = numbers.Pop();
+					char operatorToApply = operators.Pop();
+					numbers.Push(ApplyOperator(firstOperand, secondOperand, operatorToApply));
+				}
+			}
+			catch {
+				return double.NaN;
+			}
+
+			if (numbers.Count == 0) return double.NaN;
+
 	        return numbers.Pop();
 	    }
 
@@ -73,13 +87,13 @@ namespace Utilities.CalcUtil {
 	    }
 
 	    private static double ApplyOperator(double a, double b, char op) {
-	        switch (op) {
-	            case '+': return a + b;
-	            case '-': return a - b;
-	            case '*': return a * b;
-	            case '/': return a / b;
-				default: throw new ArgumentException("Invalid operator: " + op);
-	        }
-	    }
+            return op switch {
+                '+' => a + b,
+                '-' => a - b,
+                '*' => a * b,
+                '/' => a / b,
+                _ => throw new ArgumentException("Invalid operator: " + op),
+            };
+        }
 	}
 }

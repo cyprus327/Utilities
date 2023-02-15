@@ -5,13 +5,17 @@ using System.Collections.Generic;
 namespace Utilities.MenuUtil {
 	internal class Menu {
 		public Menu(string title, string[] options) {
-			Title = title;
-			Options = options;
+			_title = title;
+			_options = new Dictionary<int, (string, bool)>();
+            for (int i = 0; i < options.Length; i++) {
+				_options.Add(i, (options[i], false));
+			}
 		}
-
-		public string Title { get; set; }
-		public string[] Options { get; set; }
+		
 		public int SelectedIndex { get; private set; } = 0;
+		
+		readonly Dictionary<int, (string, bool)> _options;
+		readonly string _title;
 
 		public void Run(MenuOptions? options = null) {
 			ConsoleKey key;
@@ -23,13 +27,13 @@ namespace Utilities.MenuUtil {
 
 				if (key == ConsoleKey.DownArrow) {
 					SelectedIndex++;
-					SelectedIndex = SelectedIndex >= Options.Length ? 0 : SelectedIndex;
+					SelectedIndex = SelectedIndex >= _options.Count ? 0 : SelectedIndex;
 					continue;
 				}
 
 				if (key == ConsoleKey.UpArrow) {
 					SelectedIndex--;
-					SelectedIndex = SelectedIndex < 0 ? Options.Length - 1 : SelectedIndex;
+					SelectedIndex = SelectedIndex < 0 ? _options.Count - 1 : SelectedIndex;
 					continue;
 				}
 
@@ -41,23 +45,36 @@ namespace Utilities.MenuUtil {
 			while (key != ConsoleKey.Enter);
 		}
 
-		private void DisplayOptions(MenuOptions options) {
-			if (MenuOptions.LargeTitle == options) {
-				Console.WriteLine(ASCIIGenerator.Generate(Title));
+		public void SelectOption(int index) {
+			_options[index] = (_options[index].Item1, !_options[index].Item2);
+        }
+
+		public void ResetOptions() {
+            for (int i = 0; i < _options.Count; i++) {
+                if (_options[i].Item2) {
+                    SelectOption(i);
+                }
+            }
+        }
+
+		private void DisplayOptions(MenuOptions option) {
+			if (MenuOptions.LargeTitle == option) {
+				Console.WriteLine(ASCIIGenerator.Generate(_title));
 			}
 			else {
-				Console.WriteLine(Title);
+				Console.WriteLine(_title);
 			}
 
 			Console.WriteLine();
-			for (int i = 0; i < Options.Length; i++) {
+			for (int i = 0; i < _options.Count; i++) {
 				if (i == SelectedIndex) {
 					Console.ForegroundColor = ConsoleColor.Cyan;
-					Console.WriteLine($"> {Options[i]}");
+					Console.WriteLine($"> {_options[i].Item1}");
 					Console.ForegroundColor = ConsoleColor.White;
 				}
 				else {
-					Console.WriteLine($"  {Options[i]}");
+					Console.ForegroundColor = _options[i].Item2 == true ? ConsoleColor.Blue : ConsoleColor.White;
+					Console.WriteLine($"  {_options[i].Item1}");
 				}
 			}
 		}

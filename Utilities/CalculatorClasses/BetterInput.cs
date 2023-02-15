@@ -18,7 +18,7 @@ namespace Utilities.CalcUtil {
 				side2 = str.Substring(cursorInd, str.Length - cursorInd);
 				Console.Write($"{side1}|{side2}");
 
-				key = Console.ReadKey(true);
+                key = Console.ReadKey(true);
 				switch (key.Key) {
 					case ConsoleKey.LeftArrow:
 						if (cursorInd > 0) cursorInd--;
