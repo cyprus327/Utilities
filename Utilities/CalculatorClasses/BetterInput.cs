@@ -14,8 +14,8 @@ namespace Utilities.CalcUtil {
 			ConsoleKeyInfo key;
 			while (true) {
 				str = sb.ToString();
-				side1 = str.Substring(0, cursorInd);
-				side2 = str.Substring(cursorInd, str.Length - cursorInd);
+				side1 = str[..cursorInd];
+				side2 = str[cursorInd..];
 				Console.Write($"{side1}|{side2}");
 				onUserInput(sb.ToString());
 

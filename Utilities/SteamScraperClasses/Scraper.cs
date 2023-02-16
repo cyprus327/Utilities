@@ -64,6 +64,7 @@ namespace Utilities.SteamScraperUtil {
 				switch (menu.SelectedIndex) {
 					case 0:
 						if (sb.ToString().Contains("&maxprice=free")) break;
+						menu.SelectOption(0);
 						sb.Append("&maxprice=free", 0, 14);
 						break;
 					case 1:

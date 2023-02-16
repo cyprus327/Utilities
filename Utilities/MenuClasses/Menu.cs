@@ -17,11 +17,11 @@ namespace Utilities.MenuUtil {
 		readonly Dictionary<int, (string, bool)> _options;
 		readonly string _title;
 
-		public void Run(MenuOptions? options = null) {
+		public void Run(MenuOptions options) {
 			ConsoleKey key;
 			do {
 				Console.Clear();
-				DisplayOptions(options ?? MenuOptions.LargeTitle);
+				DisplayOptions(options);
 
 				key = Console.ReadKey(true).Key;
 

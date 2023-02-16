@@ -44,14 +44,14 @@ namespace Utilities.PMUtil {
             return output.ToArray();
         }
 
-		public static string? GetPassword(string key) {
+        public static string? GetPassword(string key) {
 			if (!KeyExists(key)) return null;
 			
             byte[] decrypted = Retrieve(key);
             return Encoding.UTF8.GetString(decrypted);
         }
 
-		public static void Add(string key, string password) {
+        public static void Add(string key, string password) {
 			byte[] encryptedPassword = Encrypt(Encoding.UTF8.GetBytes(password), out byte[] salt);
 			
             Directory.CreateDirectory($"{PRED}{S}{key}");

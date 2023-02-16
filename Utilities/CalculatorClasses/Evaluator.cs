@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Extensions;
 
 namespace Utilities.CalcUtil {
 	internal static class Evaluator {
@@ -20,9 +21,7 @@ namespace Utilities.CalcUtil {
 
 					bool negative = false;
 					if (currentChar == '-') {
-						if (i == 0 || i > 0 && expression[i - 1] == '-' && 
-							(i > 1 ? !char.IsDigit(expression[i - 2]) : 
-							i == 1 ? expression[i - 1] == '(' || expression[i - 1] == ')' : true)) {
+						if (i == 0 || (i > 0 && expression[i - 1].Check('-', '(', ')', '*', '/'))) {
 							negative = true;
 							i++;
 							currentChar = expression[i];
@@ -52,7 +51,7 @@ namespace Utilities.CalcUtil {
 						}
 						operators.Pop();
 					}
-					else if (currentChar == '+' || currentChar == '-' || currentChar == '*' || currentChar == '/') {
+					else if (currentChar.Check('+', '-', '*', '/')) {
 						while (operators.Count > 0 && HasPrecedence(currentChar, operators.Peek())) {
 							double secondOperand = numbers.Pop();
 							double firstOperand = numbers.Pop();

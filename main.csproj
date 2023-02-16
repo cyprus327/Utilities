@@ -6,4 +6,8 @@
 		<StartupObject>Program</StartupObject>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="Utilities\.Extensions\Extensions.cs" />
+  </ItemGroup>
+
 </Project>
