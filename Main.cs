@@ -65,15 +65,21 @@ internal class Program {
 		Console.Clear();
 		Console.WriteLine("Enter an expression or 'exit' to exit:");
 
+		void OnUserInput(string expression) {
+			double result = Utilities.CalcUtil.Evaluator.EvaluateExpression(expression);
+			Display(" = ", ConsoleColor.Cyan);
+			Display($"{result}\n", ConsoleColor.Blue);
+		}
+		
 		while (true) {
-			string expression = Utilities.CalcUtil.BetterInput.Read();
+			string expression = Utilities.CalcUtil.BetterInput.Read(s => OnUserInput(s));
 			if (expression == "exit" || expression == "") return;
 			
 			if (expression.Contains('=')) {
 				Display("Enter one side only, e.g. 9.5 / (1 - 4)\n", ConsoleColor.Red);
 				RunCalculator();
 			}
-	
+			
 			double result = Utilities.CalcUtil.Evaluator.EvaluateExpression(expression);
 			Display(expression, ConsoleColor.White);
 			Display(" = ", ConsoleColor.Cyan);

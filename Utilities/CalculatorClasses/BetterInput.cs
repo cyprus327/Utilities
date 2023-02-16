@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Utilities.CalcUtil {
 	internal static class BetterInput {
-		public static string Read() {
+		public static string Read(Action<string> onUserInput) {
 			StringBuilder sb = new StringBuilder();
         	int cursorInd = 0;
 			
@@ -17,6 +17,7 @@ namespace Utilities.CalcUtil {
 				side1 = str.Substring(0, cursorInd);
 				side2 = str.Substring(cursorInd, str.Length - cursorInd);
 				Console.Write($"{side1}|{side2}");
+				onUserInput(sb.ToString());
 
                 key = Console.ReadKey(true);
 				switch (key.Key) {

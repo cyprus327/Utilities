@@ -20,7 +20,9 @@ namespace Utilities.CalcUtil {
 
 					bool negative = false;
 					if (currentChar == '-') {
-						if (i == 0 || i > 0 && expression[i - 1] == '-' && (i > 1 ? !char.IsDigit(expression[i - 2]) : true)) {
+						if (i == 0 || i > 0 && expression[i - 1] == '-' && 
+							(i > 1 ? !char.IsDigit(expression[i - 2]) : 
+							i == 1 ? expression[i - 1] == '(' || expression[i - 1] == ')' : true)) {
 							negative = true;
 							i++;
 							currentChar = expression[i];
