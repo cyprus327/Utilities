@@ -8,8 +8,7 @@ internal class Program {
 		Menu menu = new Menu("Utilities.", new string[] {
 			"Password Manager", 
 			"Calculator", 
-			"Chess",
-			"Tic Tac Toe",
+			"Games",
 			"Get Random Steam Game\n",
 			"Exit" 
 		});
@@ -20,16 +19,15 @@ internal class Program {
 			switch (menu.SelectedIndex) {
 				case 0: RunPasswordManager(); break;
 				case 1: RunCalculator(); break;
-				case 2: RunChess(); break;
-				case 3: RunTicTacToe(); break;
-				case 4: RunSteamScraper(); break;
-				case 5: Environment.Exit(0); break;
+				case 2: RunGamesMenu(); break;
+				case 3: RunSteamScraper(); break;
+				case 4: Environment.Exit(0); break;
 				default: break;
 			}
 		}
     }
 
-    static void RunPasswordManager() {
+    private static void RunPasswordManager() {
 		Console.Clear();
 		Console.WriteLine("Encrypting passwords...");
 		Console.WriteLine("Initalizing...\n");
@@ -60,7 +58,7 @@ internal class Program {
 		}
     }
 
-	static void RunCalculator() {
+	private static void RunCalculator() {
 		Console.Clear();
 		Console.WriteLine("Enter an expression or 'exit' to exit:");
 
@@ -78,6 +76,25 @@ internal class Program {
 			
 			var key = Console.ReadKey(true).Key;
 			if (key == ConsoleKey.Escape) return;
+		}
+	}
+
+	private static void RunGamesMenu() {
+		Menu menu = new Menu("Games.", new string[] {
+			"Chess",
+			"Tic Tac Toe",
+			"Pong"
+		});
+
+		while (true) {
+			menu.Run(MenuOptions.LargeTitle);
+
+			switch (menu.SelectedIndex) {
+				case -1: return;
+				case 0: RunChess(); break;
+				case 1: RunTicTacToe(); break;
+				case 2: RunPong(); break;
+			}
 		}
 	}
 
@@ -111,6 +128,23 @@ internal class Program {
 				case -1: return;
 				case 0: Utilities.TTTUtil.TicTacToe.PlayVsAI(); break;
 				case 1: Utilities.TTTUtil.TicTacToe.PlayVsHuman(); break;
+			}
+		}
+	}
+
+	private static void RunPong() {
+		Menu menu = new Menu("Pong.", new string[] {
+			"AI opponent",
+			"Human opponent"
+		});
+
+		while (true) {
+			menu.Run(MenuOptions.LargeTitle);
+
+			switch (menu.SelectedIndex) {
+				case -1: return;
+				case 0: Utilities.PongUtil.Pong.PlayVsAI(); break;
+				case 1: Utilities.PongUtil.Pong.PlayVsHuman(); break;
 			}
 		}
 	}
